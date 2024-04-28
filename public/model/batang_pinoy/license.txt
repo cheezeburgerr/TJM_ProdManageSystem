@@ -1,0 +1,11 @@
+Model Information:
+* title:	BATANG PINOY
+* source:	https://sketchfab.com/3d-models/batang-pinoy-775030800f694325afa11bf0a2be67b3
+* author:	Sev (https://sketchfab.com/sevclothing)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "BATANG PINOY" (https://sketchfab.com/3d-models/batang-pinoy-775030800f694325afa11bf0a2be67b3) by Sev (https://sketchfab.com/sevclothing) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

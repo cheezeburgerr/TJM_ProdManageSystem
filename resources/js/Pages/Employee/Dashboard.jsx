@@ -4,6 +4,7 @@ import Table from '@/Components/Table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import EmployeeLayout from '@/Layouts/EmployeeLayout';
 import { Head } from '@inertiajs/react';
+import { Progress } from 'flowbite-react';
 
 export default function Dashboard({ auth, boxes, order }) {
 
@@ -16,7 +17,7 @@ export default function Dashboard({ auth, boxes, order }) {
             { title: 'Apparel', field: 'product_name' },
             { title: 'Due Date', field: 'due_date' },
             { title: 'Status', field: 'status' },
-            { title: 'Progress', field: 'progress' }
+
         ];
     } else if (auth.employee.department_id === 2) {
         columns = [
@@ -31,7 +32,7 @@ export default function Dashboard({ auth, boxes, order }) {
             { title: 'Team', field: 'team_name' },
             { title: 'Due Date', field: 'due_date' },
             { title: 'Status', field: 'status' },
-            { title: 'Progress', field: 'progress' }
+
         ];
     }
 
@@ -54,7 +55,22 @@ export default function Dashboard({ auth, boxes, order }) {
                     </div>
                     <div class="break-inside-avoid-column col-span-2">
                         <div class="p-4 bg-white rounded-md shadow-md">
-                            <h1 class="font-semibold ">Team Details</h1>
+                            <h1 class="font-semibold ">Production Progress</h1>
+                            <div className='p-4'>
+                                {order.map(item => (
+                                    <>
+                                        <div className="mb-4">
+                                        <p>{item.team_name}</p>
+
+                                        <Progress progress={item.progress} size={'md'} color='teal'/>
+                                        <div className='flex justify-between mt-1'>
+                                        <p>{item.status}</p>
+                                        <p>{item.progress}%</p>
+                                        </div>
+                                        </div>
+                                    </>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

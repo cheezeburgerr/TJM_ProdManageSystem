@@ -6,6 +6,7 @@ import SecondaryButton from './SecondaryButton';
 import AssignModal from './AssignModal';
 import Dropdown from '@/Components/Dropdown';
 import { Link } from '@inertiajs/react';
+import { Progress, Tooltip } from 'flowbite-react';
 import { ArrowForward, CaretDownOutline, CaretUpOutline, EllipsisVertical, Eye } from 'react-ionicons'
 
 
@@ -241,9 +242,12 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                                                 </p>
                                             </td>
                                         ))}
-                                        <td className='flex gap-x-1 items-center p-4'>
+                                        <td className='flex gap-x-1 items-center px-4'>
 
+                                            <Tooltip content="View">
                                             <Eye height={'20px'} onClick={() => viewOrder(index)} color={'#1f2937'} className='mx-2  cursor-pointer' />
+                                            </Tooltip>
+
 
                                             {/* {currentUrl === '/employee/production' && (
                                                 <>
@@ -259,7 +263,7 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                                                             <Dropdown>
                                                                 <Dropdown.Trigger>
                                                                     <>
-                                                                    <EllipsisVertical  className={'cursor-pointer'}/>
+                                                                        <EllipsisVertical className={'cursor-pointer'} />
                                                                     </>
                                                                 </Dropdown.Trigger>
 

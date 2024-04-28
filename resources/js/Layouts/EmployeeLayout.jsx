@@ -8,6 +8,7 @@ import Sidebar from '@/Components/Sidebar';
 
 export default function EmployeeLayout({ user, children }) {
 
+
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -112,7 +113,7 @@ export default function EmployeeLayout({ user, children }) {
 
 
                 </nav>
-                <div className="p-8">{children}</div></main>
+                <div className="p-2 md:p-8">{children}</div></main>
         </div >
     );
 }

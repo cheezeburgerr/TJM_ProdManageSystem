@@ -43,6 +43,11 @@ class OrderController extends Controller
         return Inertia::render('Downpayment', ['order' => $order]);
     }
 
+    public function configurator() {
+
+        return Inertia::render('Tshirt');
+    }
+
     public function store(Request $request)
     {
 

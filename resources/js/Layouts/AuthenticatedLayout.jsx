@@ -241,6 +241,7 @@ export default function Authenticated({ user, header, children }) {
     </div>
 </footer>
 
+<script src="../path/to/flowbite/dist/flowbite.min.js"></script>
         </div>
     );
 }
