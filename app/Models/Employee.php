@@ -22,10 +22,14 @@ class Employee extends Authenticatable
      * @var array<int, string>
      */
 
+     protected $keyType = 'string';
      protected $primaryKey = 'employee_id';
      protected $guard = 'employee';
     protected $fillable = [
-        'name',
+        'employee_id',
+        'first_name',
+        'last_name',
+        'department_id',
         'email',
         'password',
     ];

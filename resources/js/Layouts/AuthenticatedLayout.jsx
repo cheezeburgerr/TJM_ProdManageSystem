@@ -9,8 +9,8 @@ export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     return (
-        <div className="font-DM min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="sticky top-0 bg-gray-100 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 z-50">
+        <div className=" min-h-screen bg-gray-100 dark:bg-gray-900">
+            <nav className="sticky top-0 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-14">
                         <div className="flex">
@@ -27,13 +27,13 @@ export default function Authenticated({ user, header, children }) {
 
                         <div className="hidden sm:-my-px sm:ms-10 sm:flex me-8 h-full">
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
+                                    Home
                                 </NavLink>
                                 <NavLink href={route('show.products')} active={route().current('show.products')}>
                                     Order
                                 </NavLink>
-                                <NavLink href={route('show.products')} active={route().current('show_products')}>
-                                    Customer Service
+                                <NavLink href={route('configurator')} active={route().current('configuator')}>
+                                    3D Designer
                                 </NavLink>
                             </div>
                             <div className="ms-3 relative">
@@ -125,9 +125,9 @@ export default function Authenticated({ user, header, children }) {
                         <ResponsiveNavLink href={route('show.products')} active={route().current('show.products')}>
                             Order
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('show.products')} active={route().current('show.products')}>
+                        {/* <ResponsiveNavLink href={route('show.products')} active={route().current('show.products')}>
                             Customer Service
-                        </ResponsiveNavLink>
+                        </ResponsiveNavLink> */}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
@@ -167,11 +167,12 @@ export default function Authenticated({ user, header, children }) {
 
 
 
-            <main className='bg-gray-200'>{children}</main>
+            <div className="flex flex-col min-h-screen">
+            <main className='bg-gray-200 flex-grow'>{children}</main>
 
 
 
-<footer class="bg-black">
+<footer class="bg-black mt-auto">
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">
@@ -180,7 +181,7 @@ export default function Authenticated({ user, header, children }) {
                   <span class="self-center text-2xl font-semibold whitespace-nowrap text-white"> Sportswear</span>
               </a>
               <div className='mt-3 text-xs text-gray-500'>
-                <p className='mb-2'>Mabini St., San Carlos City, Pangasinan, Philippines</p>
+                <p className='mb-2'>Brgy. Mabini, San Carlos City, Pangasinan, Philippines</p>
                 <p className='mb-2'>+63 900 000 0000</p>
                 <p className='mb-2'>josephmislang@gmail.com</p>
               </div>
@@ -229,7 +230,7 @@ export default function Authenticated({ user, header, children }) {
           <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href="" class="hover:underline">TJM Sportswear™</a>. All Rights Reserved.
           </span>
           <div class="flex mt-4 sm:justify-center sm:mt-0">
-              <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <a href="https://www.facebook.com/tjmsportswear" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
                   <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 8 19">
                         <path fill-rule="evenodd" d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z" clip-rule="evenodd"/>
                     </svg>
@@ -240,6 +241,7 @@ export default function Authenticated({ user, header, children }) {
       </div>
     </div>
 </footer>
+            </div>
 
 <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
         </div>

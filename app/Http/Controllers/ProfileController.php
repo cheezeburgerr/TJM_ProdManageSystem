@@ -22,6 +22,7 @@ class ProfileController extends Controller
         $orders = Order::select('*','orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->where('orders.customer_id', Auth::id())->orderBy('orders.due_date', 'desc')->get();
 
 
+
         // dd($orders);
 
         return Inertia::render('Profile/Profile', ['orders' => $orders]);

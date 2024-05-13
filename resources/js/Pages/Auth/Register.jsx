@@ -10,6 +10,8 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        address: '',
+        contact_number: '',
         password: '',
         password_confirmation: '',
     });
@@ -29,8 +31,9 @@ export default function Register() {
     return (
         <GuestLayout>
             <Head title="Register" />
-
+            <h1 className="font-bold text-4xl font-Bebas mb-4 text-gray-900">Register</h1>
             <form onSubmit={submit}>
+                <div className="flex gap-x-4">
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
 
@@ -46,6 +49,40 @@ export default function Register() {
                     />
 
                     <InputError message={errors.name} className="mt-2" />
+                </div>
+                <div>
+                    <InputLabel htmlFor="contact_number" value="Contact Number" />
+
+                    <TextInput
+                        id="contact_number"
+                        name="contact_number"
+                        value={data.contact_number}
+                        className="mt-1 block w-full"
+                        autoComplete="contact_number"
+                        isFocused={true}
+                        onChange={(e) => setData('contact_number', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.contact_number} className="mt-2" />
+                </div>
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="address" value="Address" />
+
+                    <TextInput
+                        id="address"
+                        type="text"
+                        name="address"
+                        value={data.address}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        onChange={(e) => setData('address', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.address} className="mt-2" />
                 </div>
 
                 <div className="mt-4">

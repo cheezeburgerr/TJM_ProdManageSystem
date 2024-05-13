@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+ import { useEffect } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
@@ -31,7 +31,7 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
+            <h1 className="font-bold text-4xl font-Bebas mb-4 text-gray-900">Log In</h1>
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
@@ -92,6 +92,12 @@ export default function Login({ status, canResetPassword }) {
                     </PrimaryButton>
                 </div>
             </form>
+            <div className="mt-6">
+            <Link href={route('register')}>
+                        <a className='text-xs text-gray-500'><span>Don't have an account? </span><i>Register Here</i></a>
+                    </Link>
+
+            </div>
         </GuestLayout>
     );
 }

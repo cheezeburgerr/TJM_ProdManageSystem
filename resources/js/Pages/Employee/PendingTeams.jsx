@@ -27,7 +27,7 @@ export default function Dashboard({ auth, boxes, order }) {
         >
 
 <Head title="Pending Teams" />
-            <h1 className='text-2xl font-bold mb-4'>Pending Teams</h1>
+            <h1 className='text-2xl font-bold mb-4 text-gray-800'>Pending Teams</h1>
 
 
 

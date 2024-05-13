@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Equipment;
+use App\Models\Gallery;
 use App\Models\Lineup;
 use App\Models\Order;
 use App\Models\ProductionDetails;
@@ -70,6 +72,26 @@ class APIController extends Controller
         $lineup = Lineup::find($id);
 
         $lineup->status = $request->printed;
+        $lineup->note = null;
+        $lineup->save();
+
+        $progress = ProductionDetails::find($request->prodId);
+        $progress->progress = $request->progress;
+        $progress->save();
+    }
+
+    public function update_check (Request $request, $id) {
+        $lineup = Lineup::find($id);
+
+        $lineup->status = $request->printed;
+        $lineup->note = null;
+        $lineup->save();
+    }
+
+    public function first_check (Request $request, $id) {
+        $lineup = Lineup::find($id);
+
+        $lineup->status = $request->printed;
         $lineup->save();
 
         $progress = ProductionDetails::find($request->prodId);
@@ -86,22 +108,20 @@ class APIController extends Controller
 
 
     public function return_records (Request $request) {
-        $uncheckedRecordIds = $request->input('uncheckedRecords');
-        $errorType = $request->input('errorType');
+        $requestData = $request->all();
 
-        try {
-            // Update the status of unchecked records to 'error'
-            Lineup::whereIn('id', $uncheckedRecordIds)->update(['status' => 'Error']);
+        foreach ($requestData as $recordData) {
+            $record = Lineup::find($recordData['id']);
 
-            // Update the note column with the error type
-            Lineup::whereIn('id', $uncheckedRecordIds)->update(['note' => $errorType]);
-
-            // Return a success response
-            return response()->json(['message' => 'Lineup errors updated successfully'], 200);
-        } catch (\Exception $e) {
-            // Return an error response if something went wrong
-            return response()->json(['message' => 'Error updating lineup errors', 'error' => $e->getMessage()], 500);
+            if ($record) {
+                // Update record with error type
+                $record->status = 'Error';
+                $record->note = $recordData['errorType'];
+                $record->save();
+            }
         }
+
+        return response()->json(['message' => 'Records updated successfully'], 200);
     }
 
     public function get_errors($id){
@@ -130,5 +150,45 @@ class APIController extends Controller
         $printer->update($validatedData);
 
         return response()->json(['message' => 'Printer status updated successfully'], 200);
+    }
+
+    public function add_picture (Request $request) {
+        if ($request->has('image')) {
+            $imagePath = $request->file('image');
+            $name = time() . '.' . $imagePath->getClientOriginalExtension();
+            $imagePath->move('images/gallery', $name);
+        }
+
+        Gallery::create([
+            'image' => $imagePath,
+            'description' => $request->description,
+            'product_id' => $request->product_id
+        ]);
+
+        return to_route('admin.products')->with('success', 'Product Successfully Added');
+    }
+    public function get_employees() {
+
+        $employees = Employee::with('department')->get();
+
+        return response()->json($employees);
+    }
+
+    public function change_status(Request $request, $id) {
+        $order = ProductionDetails::find($id);
+
+        $order->status = $request->status;
+        $order->save();
+
+        return to_route('employee.teams')->with('success', $request->message);
+    }
+
+    public function cancel_order(Request $request, $id) {
+        $order = ProductionDetails::find($id);
+
+        $order->status = $request->status;
+        $order->save();
+
+        return to_route('profile.show')->with('success', 'Order Successfully Cancelled');
     }
 }

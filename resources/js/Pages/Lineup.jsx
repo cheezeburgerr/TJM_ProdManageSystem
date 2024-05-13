@@ -6,6 +6,7 @@ import { Head } from '@inertiajs/react';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { CloseOutline } from 'react-ionicons';
 
 export default function Lineup({ auth, order, order_id }) {
     const [rows, setRows] = useState([{ id: 0 }]);
@@ -46,10 +47,10 @@ export default function Lineup({ auth, order, order_id }) {
     return (
         <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}>
             <Head title="Lineup" />
-            <div className="py-12">
+            <div className="py-12 text-gray-900">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div className=" font-semibold mb-3 tracking-wide">
-                    <h1 className="text-4xl text-center md:text-left">{order.team_name}</h1>
+                    <h1 className="text-4xl text-center md:text-left ">{order.team_name}</h1>
                 </div>
 
                 <form className="relative overflow-x-auto  sm:rounded-lg" onSubmit={handleSubmit}>
@@ -86,36 +87,37 @@ export default function Lineup({ auth, order, order_id }) {
                                 {rows.map(row => (
                                     <tr key={row.id}>
                                         <td data-label="Name">
-                                            <input className="w-full md:w-48" type="text" name={`input[${row.id}][player_name]`} placeholder="Name" required />
+                                            <TextInput className="w-full md:w-48" type="text" name={`input[${row.id}][player_name]`} placeholder="Name" required />
                                         </td>
                                         <td data-label="Number">
-                                            <input className="w-full md:w-36" type="text" name={`input[${row.id}][player_details]`} placeholder="Number" />
+                                            <TextInput className="w-full md:w-36" type="text" name={`input[${row.id}][player_details]`} placeholder="Number" />
                                         </td>
                                         <td data-label="Classification">
-                                            <select className="w-full md:w-36" name={`input[${row.id}][classification]`} required>
+                                            <select className="w-full md:w-36 border-gray-300 rounded-md" name={`input[${row.id}][classification]`} required>
                                                 <option value="" disabled>Select Classification</option>
                                                 <option value="Adult">Adult</option>
                                                 <option value="Kid">Kid</option>
                                             </select>
                                         </td>
                                         <td data-label="Gender">
-                                            <select className="w-full md:w-36" name={`input[${row.id}][gender]`} required>
+                                            <select className="w-full md:w-36 border-gray-300 rounded-md" name={`input[${row.id}][gender]`} required>
                                                 <option value="" disabled>Select Gender</option>
                                                 <option value="Male">Male</option>
                                                 <option value="Female">Female</option>
                                             </select>
                                         </td>
                                         <td data-label="Upper Size">
-                                            <input className="w-full md:w-36" type="text" name={`input[${row.id}][upper_size]`} placeholder="Upper Size" />
+                                            <TextInput className="w-full md:w-36" type="text" name={`input[${row.id}][upper_size]`} placeholder="Upper Size" />
                                         </td>
                                         <td data-label="Short Size">
-                                            <input className="w-full md:w-36" type="text" name={`input[${row.id}][short_size]`} placeholder="Short Size" />
+                                            <TextInput className="w-full md:w-36" type="text" name={`input[${row.id}][short_size]`} placeholder="Short Size" />
                                         </td>
                                         <td data-label="Short Name">
-                                            <input className="w-full md:w-36" type="text" name={`input[${row.id}][short_name]`} placeholder="" />
+                                            <TextInput className="w-full md:w-36" type="text" name={`input[${row.id}][short_name]`} placeholder="" />
                                         </td>
                                         <td>
-                                            <button type="button" onClick={() => removeRow(row.id)} className="btn btn-dark btn-sm">Remove</button>
+                                            {/* <button type="button" onClick={() => removeRow(row.id)} className="btn btn-dark btn-sm">Remove</button> */}
+                                            <CloseOutline onClick={() => removeRow(row.id)} className='cursor-pointer'></CloseOutline>
                                         </td>
                                     </tr>
                                 ))}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AttributeOptions;
+use App\Models\Gallery;
 use App\Models\Lineup;
 use App\Models\Order;
 use App\Models\OrderAttributesOption;
@@ -12,6 +13,7 @@ use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 
 use Illuminate\Support\Facades\Log;
@@ -19,7 +21,8 @@ use Illuminate\Support\Facades\Log;
 class OrderController extends Controller
 {
 
-    public function order($id)
+
+    public function custom_order($id)
     {
 
 
@@ -27,7 +30,20 @@ class OrderController extends Controller
         $options = AttributeOptions::where('attributes_id', $product->id)->get();
 
         // dd($product);
-        return Inertia::render('Order', ['products' => $product]);
+        return Inertia::render('CustomOrder', ['products' => $product]);
+    }
+
+    public function order($id)
+    {
+
+        $selected = Gallery::with('products')->find($id);
+        $product = Products::with('attributes.options')->find($selected->products->id);
+
+        // dd($product);
+        $options = AttributeOptions::where('attributes_id', $product->id)->get();
+
+        // dd($product);
+        return Inertia::render('Order', ['products' => $product, 'picture' => $selected]);
     }
     public function show_products()
     {
@@ -40,10 +56,54 @@ class OrderController extends Controller
         $order = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->with('products.attributes', 'attributes', 'lineups')->find($id);
 
 
+        if($order === null || $order->customer_id !== auth()->id()){
+            return redirect()->route('dashboard');
+        }
+
+        if($order->downpayment !== null){
+            return redirect()->route('dashboard');
+        }
         return Inertia::render('Downpayment', ['order' => $order]);
     }
 
-    public function configurator() {
+    public function downpayment_store (Request $request, $id) {
+        $order = Order::find($id);
+
+        if ($request->has('image')) {
+            $imagePath = $request->file('image');
+            $name = time() . '.' . $imagePath->getClientOriginalExtension();
+            $imagePath->move('images/customers/downpayment', $name);
+        }
+
+
+        $order->downpayment_proof = $name;
+        $order->save();
+
+        return to_route('dashboard', ['id' => $id]);
+    }
+
+    public function verifying($id) {
+
+
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->find($id);
+
+        if($order === null || $order->customer_id !== auth()->id()){
+            return redirect()->route('dashboard');
+        }
+
+        if($order->status !== 'Pending'){
+            return redirect()->route('dashboard');
+        }
+
+        return Inertia::render('SuccessfulOrder', ['order' => $order]);
+    }
+    public function view_order($id)
+    {
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->find($id);
+        return Inertia::render('ViewOrder', ['order' => $order]);
+    }
+    public function configurator()
+    {
 
         return Inertia::render('Tshirt');
     }
@@ -51,6 +111,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
+        // dd($request);
         $request->validate([
             'team_name' => 'required|string|max:255',
             'due_date' => 'required|date',
@@ -84,14 +145,76 @@ class OrderController extends Controller
         $order->product_id = $request->product_id;
         $order->save();
 
-        // Store selected options for each attribute
+
         foreach ($request->all() as $key => $value) {
-            // Check if the key corresponds to an attribute ID
+
             if (is_numeric($key) && !in_array($key, ['team_name', 'due_date', 'image'])) {
-                // Create a record in OrderAttributesOptions table
+
                 $orderAttributesOptions = new OrderAttributesOption();
                 $orderAttributesOptions->order_id = $order->id;
-                $orderAttributesOptions->option_id = $value; // Assuming the value is the option ID
+                $orderAttributesOptions->option_id = $value;
+                $orderAttributesOptions->save();
+            }
+        }
+
+        // return Inertia::render('Dashboard')->with('success', 'Order created successfully');
+        return response()->json([
+            'id' => $order->id,
+        ], 200);
+    }
+
+
+    public function design_store(Request $request)
+    {
+
+        // dd($request);
+        $request->validate([
+            'team_name' => 'required|string|max:255',
+            'due_date' => 'required|date',
+            // Add validation rules for other form fields if needed
+        ]);
+
+        $sourcePath = 'images/gallery/'.$request->input('image');
+
+        if (File::exists($sourcePath)) {
+
+            $destinationPath = 'images/customers/' . $request->input('image');
+            File::copy($sourcePath, $destinationPath);
+
+
+        } else {
+
+            echo "Source image file not found";
+        }
+
+
+
+        // Create new order record
+
+        $id = Auth::id();
+
+        $production_details = ProductionDetails::create([
+            'status' => 'Pending'
+        ]);
+
+        $order = new Order();
+        $order->team_name = $request->team_name;
+        $order->due_date = $request->due_date;
+        $order->design = $request->image;
+        $order->order_price = $request->order_price;
+        $order->customer_id = $id;
+        $order->production_details_id = $production_details->production_details_id;
+        $order->product_id = $request->product_id;
+        $order->save();
+
+
+        foreach ($request->all() as $key => $value) {
+
+            if (is_numeric($key) && !in_array($key, ['team_name', 'due_date', 'image'])) {
+
+                $orderAttributesOptions = new OrderAttributesOption();
+                $orderAttributesOptions->order_id = $order->id;
+                $orderAttributesOptions->option_id = $value;
                 $orderAttributesOptions->save();
             }
         }
@@ -176,7 +299,7 @@ class OrderController extends Controller
     public function get_details($id)
     {
 
-        $data = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->with('products.attributes', 'attributes', 'lineups')->find($id);
+        $data = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->find($id);
 
         // dd($data);
         if (!$data) {
@@ -193,28 +316,29 @@ class OrderController extends Controller
     public function edit_order($id)
     {
         $order = Order::with('products.attributes', 'attributes', 'products.attributes.options')->find($id);
-        // dd($order);
-        return Inertia::render('EditOrder', ['order' => $order]);
+
+        $product = Products::with('attributes.options')->find($order->product_id);
+        // dd($product);
+        return Inertia::render('EditOrder', ['order' => $order, 'products' => $product]);
     }
 
     public function update_order(Request $request, $id)
     {
-        // Find the order by its ID
+
         $order = Order::findOrFail($id);
 
-        // Validate the incoming request data
         $validatedData = $request->validate([
             'team_name' => 'required|string',
             'due_date' => 'required|date',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Assuming image is uploaded via the form
-            // Add validation rules for other fields if needed
+
         ]);
 
-        // Update order fields
+
         $order->team_name = $validatedData['team_name'];
         $order->due_date = $validatedData['due_date'];
+        $order->order_price = $request['order_price'];
 
-        // Handle image update if provided
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
@@ -222,10 +346,51 @@ class OrderController extends Controller
             $order->design = $imageName;
         }
 
-        // Save the updated order
+
         $order->save();
 
-        // Return a response indicating success
+
+        $attributes = OrderAttributesOption::where('order_id', $order->id)->get();
+
+        foreach ($attributes as $attr) {
+            $attr->delete();
+        }
+
+        foreach ($request->all() as $key => $value) {
+
+            if (is_numeric($key) && !in_array($key, ['team_name', 'due_date', 'image'])) {
+
+                $orderAttributesOptions = new OrderAttributesOption();
+                $orderAttributesOptions->order_id = $order->id;
+                $orderAttributesOptions->option_id = $value;
+                $orderAttributesOptions->save();
+            }
+        }
+
+        $price = $order->order_price;
+
+        $players = Lineup::where('order_id', $order->id)->get();
+
+        foreach ($players as $player) {
+
+            if ($player['classification'] === 'Kid') {
+                $player->lineup_price = $price - 50;
+            } else {
+                $player->lineup_price = $price;
+            }
+            $player->save();
+        }
+
+
+        $prices = Lineup::where('order_id', $order->id)->get();
+
+        $totalPrice = 0;
+        foreach ($prices as $price) {
+            $totalPrice += $price->lineup_price;
+        }
+        $order->total_price = $totalPrice;
+        $order->save();
+
         return response()->json(['message' => 'Order updated successfully', 'order' => $order]);
     }
 
@@ -294,6 +459,4 @@ class OrderController extends Controller
         // Return a response indicating success
         return response()->json(['message' => 'Player details deleted successfully', 'player' => $player]);
     }
-
 }
-

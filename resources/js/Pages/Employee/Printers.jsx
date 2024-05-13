@@ -31,7 +31,7 @@ export default function Printers({ auth, boxes, order, artists, printers }) {
   return (
     <EmployeeLayout user={auth.employee} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}>
    <Head title="Printers" />
-      <h1 className="font-bold text-2xl mb-4">Printers</h1>
+      <h1 className="font-bold text-2xl mb-4 text-gray-800">Printers</h1>
       <div className='bg-white rounded-md shadow-md p-4'>
         <table className="table-auto w-full">
           <thead>

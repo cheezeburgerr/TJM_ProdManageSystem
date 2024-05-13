@@ -32,6 +32,7 @@ Route::put('/assign-artist/{id}', [APIController::class, 'assign']);
 
 Route::put('/assign-printer/{id}', [APIController::class, 'assign_printer']);
 Route::put('/lineup-status/{id}', [APIController::class, 'update_lineup_status']);
+Route::put('/first-check/{id}', [APIController::class, 'first_check']);
 Route::put('/update-printing/{id}', [APIController::class, 'update_printing']);
 
 Route::put('/return-records', [APIController::class, 'return_records']);
@@ -39,3 +40,8 @@ Route::get('/get-errors/{id}', [APIController::class, 'get_errors']);
 
 Route::put('/reprint-errors/{id}', [APIController::class, 'reprint_errors']);
 Route::put('/printers/{printer}', [APIController::class, 'updateStatus']);
+
+
+Route::put('/update_check/{id}', [APIController::class, 'update_check']);
+Route::post('/add/picture', [APIController::class, 'add_picture']);
+Route::get('/get_employees', [APIController::class, 'get_employees']);

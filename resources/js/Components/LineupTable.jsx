@@ -5,6 +5,7 @@ import OrderDetails from './OrderDetails';
 import ALink from './ALink';
 import TextInput from './TextInput';
 import axios from 'axios';
+import { Pencil, Trash } from 'react-ionicons';
 
 export default function LineupTable({ status, order, data, id, edit }) {
     const [orderBy, setOrderBy] = useState("");
@@ -28,6 +29,7 @@ export default function LineupTable({ status, order, data, id, edit }) {
     for (let i = Math.max(1, currentPage - Math.floor(maxPageLinks / 2)); i <= Math.min(totalPages, currentPage + Math.floor(maxPageLinks / 2)); i++) {
         pageLinks.push(i);
     }
+
 
     // Pagination handlers
     const goToPage = (page) => {
@@ -145,11 +147,13 @@ export default function LineupTable({ status, order, data, id, edit }) {
         }
     };
 
+
+
     return (
         <>
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <div className="flex justify-between p-4">
+                <div className="flex justify-between p-4 bg-white">
                     <div>Lineup</div>
                     <div className='flex gap-2'>
                         {(edit && status == 'Designing' || status == 'Pending') && (
@@ -163,7 +167,8 @@ export default function LineupTable({ status, order, data, id, edit }) {
                         />
                     </div>
                 </div>
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         {column &&
                             column.map((item, index) => (
@@ -204,11 +209,13 @@ export default function LineupTable({ status, order, data, id, edit }) {
                                             </td>
                                         ))}
                                         <td>
-                                            {edit && (
+                                            {['Pending', 'Designing'].includes(status) && (
                                                 <>
-                                                    <PrimaryButton onClick={() => editModal(index, item.id)} className='me-2'>Edit</PrimaryButton>
+                                                    <div className="flex gap-x-2">
+                                                        <Pencil onClick={() => editModal(index, item.id)} className='me-2 cursor-pointer'>Edit</Pencil>
 
-                                                    <PrimaryButton onClick={() => openDeleteModal(item.id)}>Delete</PrimaryButton>
+                                                        <Trash onClick={() => openDeleteModal(item.id)} className='me-2 cursor-pointer'>Delete</Trash>
+                                                    </div>
 
                                                     <Modal
                                                         show={editMode[index]}
@@ -218,19 +225,23 @@ export default function LineupTable({ status, order, data, id, edit }) {
                                                     >
                                                         <EditTable index={index} />
                                                     </Modal>
-
-
-
-
                                                 </>
                                             )}
                                         </td>
                                     </tr>
                                 ))}
+                        {Array.isArray(currentItems) && currentItems.filter(item => !data || searchTerm === "" || item[data]?.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+                            <tr>
+                                <td colSpan={column.length + 1} className="text-center py-4">
+                                    No records found.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
 
-                <div className="flex justify-between p-4">
+                </div>
+                <div className="flex justify-between p-4 bg-white">
                     <div></div>
                     <div className="flex gap-2">
                         <button className="p-2" onClick={prevPage} disabled={currentPage === 1}>Prev</button>

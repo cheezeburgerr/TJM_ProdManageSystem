@@ -7,7 +7,9 @@ import AssignModal from './AssignModal';
 import Dropdown from '@/Components/Dropdown';
 import { Link } from '@inertiajs/react';
 import { Progress, Tooltip } from 'flowbite-react';
+import moment from 'moment';
 import { ArrowForward, CaretDownOutline, CaretUpOutline, EllipsisVertical, Eye } from 'react-ionicons'
+import { router } from '@inertiajs/react';
 
 
 export default function Table({ order, column, data, emp, fetchData, artists, printers, onRecordSelect }) {
@@ -34,6 +36,7 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
     const indexOfLastItem = currentPage * pageSize;
     const indexOfFirstItem = indexOfLastItem - pageSize;
     const currentItems = teams.slice(indexOfFirstItem, indexOfLastItem);
+
 
 
     const maxPageLinks = 5; // Adjust the number of visible page links
@@ -119,6 +122,9 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
         }
     };
 
+
+
+
     const viewOrder = (index) => {
         setViewIndex(index);
         setEditMode((prev) => {
@@ -148,13 +154,23 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
         setViewIndex(null); // Move this line outside of the setEditMode function
     };
 
+    function releaseOrder(order_id) {
+
+
+
+        router.post(`/employee/change_status/${order_id}`, {
+            status: 'Received',
+            message: 'Order Successfully Released'
+        });
+
+    }
 
     return (
         <>
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <div className="flex justify-between p-4 bg-white">
-                    <div>Teams</div>
+                    <div className='font-bold text-gray-900'>Teams</div>
                     <div>
                         <input
                             type="text"
@@ -218,24 +234,34 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                                         {column.map((col, colIndex) => (
                                             <td className="px-6 py-4" key={colIndex}>
                                                 <p>
-                                                    {col.field === 'status' ? (
+                                                    {col.field === 'due_date' ? (<>{moment(item[col.field]).format('MMMM Do YYYY')}</>) : col.field === 'status' ? (
                                                         <>
                                                             {
                                                                 item[col.field] === 'Pending' ? (
-                                                                    <span className='bg-yellow-200 px-2 rounded-full'>{item[col.field]}</span>
+                                                                    <span className='bg-yellow-300 px-2 rounded-full text-gray-100'>{item[col.field]}</span>
                                                                 ) : item[col.field] === 'Designing' ? (
-                                                                    <span className='bg-teal-200 px-2 rounded-full'>{item[col.field]}</span>
+                                                                    <span className='bg-teal-500 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
                                                                 ) : item[col.field] === 'Ready to Print' ? (
-                                                                    <span className='bg-teal-200 px-2 rounded-full'>{item[col.field]}</span>
+                                                                    <span className='bg-teal-500 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
                                                                 ) : item[col.field] === 'Printing' ? (
-                                                                    <span className='bg-orange-200 px-2 rounded-full'>{item[col.field]}</span>
+                                                                    <span className='bg-gray-900 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
                                                                 ) : item[col.field] === 'Printed' ? (
-                                                                    <span className='bg-emerald-200 px-2 rounded-full'>{item[col.field]}</span>
+                                                                    <span className='bg-emerald-500 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
+                                                                ) : item[col.field] === 'Sewing' ? (
+                                                                    <span className='bg-blue-500 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
+                                                                ) : item[col.field] === 'Finished' ? (
+                                                                    <span className='bg-green-500 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
                                                                 ) : (
-                                                                    item[col.field]
+                                                                    <span className='bg-slate-900 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
                                                                 )}
                                                         </>
-                                                    ) : (
+                                                    ) : col.field === 'first_name' ? (<>{
+                                                        <span className='inline-flex items-center'>
+                                                            <img src={item.profile_image ? `/images/employees/${item.profile_image}` : '/images/customers/profile.jpg'} alt="" className='h-5 rounded-full me-2' />
+
+                                                            {item[col.field]}
+                                                        </span>
+                                                    }</>) : (
                                                         item[col.field]
                                                     )}
 
@@ -245,7 +271,7 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                                         <td className='flex gap-x-1 items-center px-4'>
 
                                             <Tooltip content="View">
-                                            <Eye height={'20px'} onClick={() => viewOrder(index)} color={'#1f2937'} className='mx-2  cursor-pointer' />
+                                                <Eye height={'20px'} onClick={() => viewOrder(index)} color={'#1f2937'} className='mx-2  cursor-pointer' />
                                             </Tooltip>
 
 
@@ -270,7 +296,7 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                                                                 <Dropdown.Content>
                                                                     <a onClick={() => showAssign('artist', index)} className='block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out '>Assign Artist</a>
 
-                                                                    {(item.artist_id != null) && (
+                                                                    {(item.artist_id != null && item.status == 'Designing') && (
                                                                         <>
                                                                             <a onClick={() => showAssign('printer', index)} className='block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out '>Proceed</a>
 
@@ -287,11 +313,40 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
 
 
                                                     {(emp === 2 && currentUrl === '/employee/pending') && (
-                                                        <SecondaryButton onClick={handleApprove(item.production_details_id)} className='font-bold   uppercase text-xs me-1'>Approve</SecondaryButton>
+                                                        <>
+
+                                                            <SecondaryButton onClick={handleApprove(item.production_details_id)} className='font-bold   uppercase text-xs me-1'>Approve</SecondaryButton>
+
+
+                                                        </>
+
                                                     )}
+
+
+                                                    {(emp === 2 && currentUrl === '/employee/finished') && (
+                                                        <>
+
+                                                            <SecondaryButton onClick={() => releaseOrder(item.production_details_id)} className='font-bold   uppercase text-xs me-1'>Release</SecondaryButton>
+
+
+                                                        </>
+
+                                                    )}
+
                                                     {emp === 4 && (
                                                         <Link href={route('employee.print', { id: item.order_id })}>
                                                             <SecondaryButton className='font-bold   uppercase text-xs me-1'>Print</SecondaryButton>
+                                                        </Link>
+                                                    )}
+
+                                                    {emp === 5 && currentUrl === '/employee/checking' && (
+                                                        <Link href={route('employee.check', { id: item.order_id })}>
+                                                            <SecondaryButton className='font-bold   uppercase text-xs me-1'>Check</SecondaryButton>
+                                                        </Link>
+                                                    )}
+                                                    {emp === 5 && currentUrl === '/employee/final_checking' && (
+                                                        <Link href={route('employee.finalcheck', { id: item.order_id })}>
+                                                            <SecondaryButton className='font-bold   uppercase text-xs me-1'>Check</SecondaryButton>
                                                         </Link>
                                                     )}
                                                 </>
@@ -317,7 +372,11 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
 
                 {viewIndex !== null && (
                     <Modal show={true} onClose={closeModal}>
-                        <OrderDetails order={teams[viewIndex]} edit={false} />
+                        <div className="p-4">
+                            <h1 className='font-bold text-2xl'>Order Details</h1>
+                            <OrderDetails order={teams[viewIndex]} edit={false} />
+                        </div>
+
                     </Modal>
                 )}
 

@@ -13,6 +13,7 @@ export default function Modal({ children, id, show = false, maxWidth = '2xl', cl
         md: 'sm:max-w-md',
         lg: 'sm:max-w-lg',
         xl: 'sm:max-w-xl',
+        '3xl': 'sm:max-w-3xl',
         '2xl': 'sm:max-w-7xl',
     }[maxWidth];
 
@@ -46,7 +47,7 @@ export default function Modal({ children, id, show = false, maxWidth = '2xl', cl
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <Dialog.Panel
-                        className={`mb-6 bg-white dark:bg-gray-800 rounded-lg overflow-y-auto shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass}`}
+                        className={`mb-6 bg-white shadow-lg dark:bg-gray-800 rounded-lg overflow-y-auto shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass}`}
                     >
                         {children}
                     </Dialog.Panel>

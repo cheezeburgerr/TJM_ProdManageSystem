@@ -3,7 +3,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import PrintTable from '@/Components/PrintTable';
 import Table from '@/Components/Table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import EmployeeLayout from '@/Layouts/EmployeeLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import Axios from 'axios'; // Step 1: Import Axios
 import React, { useState } from 'react';
@@ -29,10 +29,10 @@ export default function Printers({ auth, boxes, order, artists, printers }) {
   };
 
   return (
-    <EmployeeLayout user={auth.employee} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}>
+    <AdminLayout user={auth.admin} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}>
    <Head title="Printers" />
-      <h1 className="font-bold text-2xl mb-4">Printers</h1>
-      <div className='bg-white rounded-md shadow-md p-4'>
+      <h1 className="font-bold text-2xl mb-4 text-gray-900">Printers</h1>
+      <div className='bg-white rounded-md shadow-md p-4 text-gray-900'>
         <table className="table-auto w-full">
           <thead>
             <tr className='text-left'>
@@ -65,6 +65,6 @@ export default function Printers({ auth, boxes, order, artists, printers }) {
           </tbody>
         </table>
       </div>
-    </EmployeeLayout>
+    </AdminLayout>
   );
 }

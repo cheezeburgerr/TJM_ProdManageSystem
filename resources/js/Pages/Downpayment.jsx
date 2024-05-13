@@ -4,7 +4,7 @@ import PrintTable from '@/Components/PrintTable';
 import Table from '@/Components/Table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import EmployeeLayout from '@/Layouts/EmployeeLayout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import Axios from 'axios'; // Step 1: Import Axios
 import React, { useState } from 'react';
 
@@ -12,6 +12,26 @@ export default function Downpayment({ auth, boxes, order, artists, printers }) {
 
     const [updatedPrinters, setUpdatedPrinters] = useState(printers);
 
+    const { data, setData, post, processing, errors, reset } = useForm({
+        image: '',
+    });
+
+
+    const submitDown = (e) => {
+        e.preventDefault();
+        console.log(data);
+
+        post(`/downpayment/store/${order.order_id}`, data, {
+            forceFormData: true,
+        })
+
+
+        console.log(data);
+
+        // Add logic to handle adding employee
+         // Close the modal after adding employee
+        // reset();
+    };
     console.log(order);
     return (
         <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}>
@@ -19,9 +39,9 @@ export default function Downpayment({ auth, boxes, order, artists, printers }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className='mb-4'>
-                        <h1 className="font-bold text-2xl">Set Downpayment  </h1>
+                        <h1 className="font-bold text-2xl">Set Downpayment </h1>
                     </div>
-                    <form>
+
                         <div className="md:columns-2">
                             {/* Left Column */}
                             <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4">
@@ -94,10 +114,10 @@ export default function Downpayment({ auth, boxes, order, artists, printers }) {
                                     <div className="mb-4 p-4 text-center">
                                         <p>GCash account number: <b>09XXXXXXXXXX</b></p>
                                     </div>
-                                  <form action="">
+                                  <form onSubmit={submitDown}>
                                   <div className="mb-4 text-center">
                                         <p>Please upload the screenshot of the transaction.</p>
-                                        <input type="file" className='w-full rounded-md border-2' />
+                                        <input type="file" className='w-full rounded-md border-2' required onChange={(e) => setData('image', e.target.files[0])}/>
                                     </div>
                                     <div className='flex justify-end'>
                                         <PrimaryButton>Submit</PrimaryButton>
@@ -107,7 +127,7 @@ export default function Downpayment({ auth, boxes, order, artists, printers }) {
                                 </div>
                             </div>
                         </div>
-                    </form>
+
                 </div>
             </div>
         </AuthenticatedLayout>

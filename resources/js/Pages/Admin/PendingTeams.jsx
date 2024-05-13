@@ -2,12 +2,12 @@ import InfoBoxes from '@/Components/InfoBoxes';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Table from '@/Components/Table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import EmployeeLayout from '@/Layouts/EmployeeLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 
 export default function Dashboard({ auth, boxes, order }) {
 
-    const emp = auth.employee.department_id;
+    const emp = auth.admin;
     let columns = [];
 
         columns = [
@@ -20,18 +20,18 @@ export default function Dashboard({ auth, boxes, order }) {
 
     console.log(columns);
     return (
-        <EmployeeLayout
+        <AdminLayout
 
-            user={auth.employee}
+            user={auth.admin}
             header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
         >
 
 <Head title="Pending Teams" />
-            <h1 className='text-2xl font-bold mb-4'>Pending Teams</h1>
+            <h1 className='text-2xl font-bold mb-4 text-gray-900'>Pending Teams</h1>
 
 
 
-            <div class="container">
+            <div class="container text-gray-900">
                 <div>
                 <Table column={columns} order={order} data={'team_name'} emp={emp}/>
                 </div>
@@ -39,6 +39,6 @@ export default function Dashboard({ auth, boxes, order }) {
 
 
 
-        </EmployeeLayout>
+        </AdminLayout>
     );
 }

@@ -97,10 +97,13 @@ function PrintTable({ order }) {
     };
 
     const handleFinishButtonClick = () => {
-        // Filter unchecked records
-        const unchecked = lineup.filter(item => item.status !== 'Printed');
+
+        const statusesToFilter = ['Printed', 'Finished', '1st Check'];
+
+        const unchecked = lineup.filter(item => !statusesToFilter.includes(item.status));
+
         setUncheckedRecords(unchecked);
-        setShowModal(true); // Show the modal
+        setShowModal(true);
     };
 
     return (
@@ -182,7 +185,7 @@ function PrintTable({ order }) {
                                 })
                                     .map((item, index) => (
                                         <tr
-                                            className={`border-b dark:border-gray-700 ${!printingStarted && item.status !== 'Printed' ? 'bg-red-200' : (index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900')}`}
+                                            className={`border-b dark:border-gray-700 ${!printingStarted && !['Printed', 'Sewing', 'Finished'].includes(item.status) ? 'bg-red-200' : (index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900')}`}
 
                                             key={index}
                                         >
@@ -194,7 +197,7 @@ function PrintTable({ order }) {
                                             <td className="px-6 py-4">
                                                 <Checkbox
                                                     type="checkbox"
-                                                    checked={item.status === 'Printed'}
+                                                    checked={['Printed', 'Sewing', 'Finished'].includes(item.status)}
                                                     onChange={() => handleCheckboxChange(index)}
                                                     disabled={!printingStarted}
                                                 />
@@ -212,7 +215,7 @@ function PrintTable({ order }) {
             {/* Modal for displaying unchecked records */}
             {showModal && (
                 <Modal show={showModal} onClose={() => setShowModal(false)}>
-                    <ReturnRecords uncheckedRecords={uncheckedRecords}/>
+                    <ReturnRecords uncheckedRecords={uncheckedRecords} />
                 </Modal>
             )}
         </div>

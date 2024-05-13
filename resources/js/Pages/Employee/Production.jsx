@@ -63,8 +63,8 @@ export default function Production({ auth, boxes, order, artists, printers, err 
             header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
         >
 
-<Head title="Production" />
-            <h1 className="font-bold text-2xl">Production</h1>
+            <Head title="Production" />
+            <h1 className="font-bold text-2xl text-gray-800 mb-8">Production</h1>
             <div className='container'>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"> {/* Two column layout */}
                     {/* Left Column: Table */}
@@ -102,14 +102,16 @@ export default function Production({ auth, boxes, order, artists, printers, err 
                                         <table className='w-full'>
                                             <thead className='text-left'>
                                                 <th>Name</th>
+                                                <th>Details</th>
                                                 <th>Note</th>
                                             </thead>
                                             <tbody>
                                                 {selectedLineup.length > 0 ? (
                                                     selectedLineup.map((error, index) => (
                                                         <tr key={index}>
-                                                            <td>{error.player_name}</td>
-                                                            <td>{error.note}</td>
+                                                            <td className='w-1/4'>{error.player_name}</td>
+                                                            <td className='w-1/4'>{error.player_details}</td>
+                                                            <td className='w-1/2 font-bold text-teal-500'>{error.note}</td>
                                                         </tr>
                                                     ))
                                                 ) : (
@@ -125,8 +127,8 @@ export default function Production({ auth, boxes, order, artists, printers, err 
                         )}
 
                         {!selectedLineup && (
-                            <div>
-                                <p>Select a team from the table.</p>
+                            <div className='h-full flex justify-center items-center'>
+                                <p className=''>Select a team from the table.</p>
                             </div>
                         )}
 

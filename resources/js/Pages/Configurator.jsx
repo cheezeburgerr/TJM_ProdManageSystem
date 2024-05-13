@@ -11,6 +11,7 @@ export default function Configurator({ auth, products }) {
     const containerWidth = window.innerWidth / 2;
     const containerHeight = window.innerHeight;
 
+
     useEffect(() => {
         const canvas = new fabric.Canvas(canvasRef.current, { width: 1000, height: 1000, preserveObjectStacking: true });
         const baseColorPicker = document.getElementById('base-color-picker');

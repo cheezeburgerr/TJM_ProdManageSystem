@@ -3,7 +3,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import PrintTable from '@/Components/PrintTable';
 import Table from '@/Components/Table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import EmployeeLayout from '@/Layouts/EmployeeLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 
@@ -58,14 +58,14 @@ export default function Production({ auth, boxes, order, artists, printers, err 
     };
 
     return (
-        <EmployeeLayout
-            user={auth.employee}
+        <AdminLayout
+            user={auth.admin}
             header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
         >
 
 <Head title="Production" />
-            <h1 className="font-bold text-2xl">Production</h1>
-            <div className='container'>
+            <h1 className="font-bold text-2xl mb-8">Production</h1>
+            <div className='container text-gray-900'>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"> {/* Two column layout */}
                     {/* Left Column: Table */}
                     <div className=''>
@@ -76,10 +76,8 @@ export default function Production({ auth, boxes, order, artists, printers, err 
                         {selectedLineup && (
                             <div>
                                 <div className='flex justify-between'>
-                                    <h2>Production Details</h2>
-                                    {selectedLineup.length !== 0 && (
-                                        <PrimaryButton onClick={handleReprintErrors}>Reprint Errors</PrimaryButton>
-                                    )}
+                                    <h2 className='font-bold'>Production Details</h2>
+
                                 </div>
                                 <ul>
 
@@ -102,14 +100,16 @@ export default function Production({ auth, boxes, order, artists, printers, err 
                                         <table className='w-full'>
                                             <thead className='text-left'>
                                                 <th>Name</th>
+                                                <th>Details</th>
                                                 <th>Note</th>
                                             </thead>
                                             <tbody>
                                                 {selectedLineup.length > 0 ? (
                                                     selectedLineup.map((error, index) => (
                                                         <tr key={index}>
-                                                            <td>{error.player_name}</td>
-                                                            <td>{error.note}</td>
+                                                            <td className='w-1/4'>{error.player_name}</td>
+                                                            <td className='w-1/4'>{error.player_details}</td>
+                                                            <td className='w-1/2 font-bold text-teal-500'>{error.note}</td>
                                                         </tr>
                                                     ))
                                                 ) : (
@@ -125,14 +125,14 @@ export default function Production({ auth, boxes, order, artists, printers, err 
                         )}
 
                         {!selectedLineup && (
-                            <div>
-                                <p>Select a team from the table.</p>
+                            <div className='h-full flex justify-center items-center'>
+                                <p className=''>Select a team from the table.</p>
                             </div>
                         )}
 
                     </div>
                 </div>
             </div>
-        </EmployeeLayout>
+        </AdminLayout>
     );
 }
