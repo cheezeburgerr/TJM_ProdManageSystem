@@ -24,16 +24,17 @@ export default function Printers({ auth, employees, departments, printers }) {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        first_name: '',
-        last_name: '',
+        name: '',
         email: '',
+        contact_number: '',
+        address: '',
         department_id: '',
     });
 
 
     // Filter employees based on search query and selected department
     const filteredEmployees = emp.filter(employee => {
-        const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase();
+        const fullName = `${employee.name}`.toLowerCase();
         const departmentId = employee.department_id; // Assuming you have department_id in the employee object
 
         // Filter by search query and department
@@ -129,7 +130,7 @@ export default function Printers({ auth, employees, departments, printers }) {
                         filteredEmployees.map(employee => (
                             <div key={employee.id} className="bg-white rounded-md shadow sm p-4 flex flex-col items-center justify-center">
                                 <img src={employee.profile_image ? `/images/employees/${employee.profile_image}` : '/images/customers/profile.jpg'} alt="" className='h-36 rounded-full mb-4' />
-                                <p className='font-bold'>{employee.first_name} {employee.last_name}</p>
+                                <p className='font-bold'>{employee.name}</p>
                                 <p className='text-center text-xs mb-4'>{employee.department.department_name}</p>
                                 <div className="flex gap-x-2 cursor-pointer">
                                     <Eye onClick={() => openDetails(employee)}/><Archive/>
@@ -145,18 +146,25 @@ export default function Printers({ auth, employees, departments, printers }) {
                         <form onSubmit={handleAddEmployee}>
                             <div className='p-4'>
                                 <h1 className="font-bold text-xl mb-4">Add Employee</h1>
-                                <div className="flex gap-x-4 w-full mb-4">
-                                    <div className='w-full'>
-                                        <InputLabel>First Name</InputLabel>
-                                        <TextInput type='text' name='first_name' className='w-full' required value={data.first_name} onChange={(e) => setData('first_name', e.target.value)} />
-                                        <InputError message={errors.first_name} className="mt-2" />
+
+                                    <div className='w-full mb-4'>
+                                        <InputLabel>Name</InputLabel>
+                                        <TextInput type='text' name='name' className='w-full' required value={data.name} onChange={(e) => setData('name', e.target.value)} />
+                                        <InputError message={errors.name} className="mt-2" />
                                     </div>
-                                    <div className='w-full'>
-                                        <InputLabel>Last Name</InputLabel>
-                                        <TextInput type='text' name='last_name' className='w-full' required onChange={(e) => setData('last_name', e.target.value)} value={data.last_name} />
-                                        <InputError message={errors.last_name} className="mt-2" />
+                                    <div className='w-full mb-4'>
+                                        <InputLabel>Contact Number</InputLabel>
+                                        <TextInput type='text' name='contact_number' className='w-full' required value={data.contact_number} onChange={(e) => setData('contact_number', e.target.value)} />
+                                        <InputError message={errors.contact_number} className="mt-2" />
                                     </div>
-                                </div>
+
+                                    <div className='w-full mb-4'>
+                                        <InputLabel>Address</InputLabel>
+                                        <TextInput type='text' name='address' className='w-full' required value={data.address} onChange={(e) => setData('address', e.target.value)} />
+                                        <InputError message={errors.address} className="mt-2" />
+                                    </div>
+
+
                                 <div className='w-full mb-4'>
                                     <InputLabel>Email</InputLabel>
                                     <TextInput type='email' name='email' className='w-full' required onChange={(e) => setData('email', e.target.value)} value={data.email} />
@@ -193,7 +201,7 @@ export default function Printers({ auth, employees, departments, printers }) {
                                     <img src={selectedEmployee.profile_image ? `/images/employees/${selectedEmployee.profile_image}` : '/images/customers/profile.jpg'} alt="" className='h-32 rounded-full' />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-xl">{selectedEmployee.first_name} {selectedEmployee.last_name}</p>
+                                    <p className="font-bold text-xl">{selectedEmployee.name} </p>
                                     <p>{selectedEmployee.department.department_name}</p>
                                     <p>{selectedEmployee.email}</p>
                                 </div>

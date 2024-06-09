@@ -31,7 +31,7 @@ class PagesController extends Controller
 
     public function message(Request $request): JsonResponse {
         $message = Messages::create([
-            'user_id' => auth()->id(),
+            'user_id' => $request->get('userid'),
             'message' => $request->get('text'),
         ]);
         SendMessage::dispatch($message);

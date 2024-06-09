@@ -20,9 +20,9 @@ export default function EmployeeLayout({ user, children }) {
     };
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-white flex">
-            {route().current('employee.dashboard') && (
+            {/* {route().current('employee.dashboard') && (
                 <div className='w-full h-56 bg-teal-500 absolute top-0 -z-[0]'>hello</div>
-            )}
+            )} */}
             <aside>
                 <div id="drawer-sidebar" className={`sticky top-0 z-50 bg-gray-50 w-64 h-screen transition duration-300 ${isDrawerOpen ? 'transform translate-x-0' : '-translate-x-full sm:translate-x-0'
                     }`}>
@@ -130,7 +130,7 @@ export default function EmployeeLayout({ user, children }) {
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400  dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 <img src={user.profile_image ? `/images/employees/${user.profile_image}` : '/images/customers/profile.jpg'} alt="" className='h-5 rounded-full me-2' />
-                                                {user.first_name}
+                                                {user.name}
 
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"

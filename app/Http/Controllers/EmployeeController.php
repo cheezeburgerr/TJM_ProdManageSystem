@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\ProductionDetails;
 use App\Models\Products;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -23,9 +24,9 @@ class EmployeeController extends Controller
     public $statusArray = ['Ready to Print', 'Printing', 'Printed', 'Sewing', 'Finished'];
     public function login()
     {
-        if (Auth::guard('employee')->check()) {
-            return redirect()->route('employee.dashboard');
-        }
+        // if (Auth::guard('employee')->check()) {
+        //     return redirect()->route('employee.dashboard');
+        // }
         return Inertia::render('Employee/Login');
     }
 
@@ -40,10 +41,17 @@ class EmployeeController extends Controller
 
         if (Auth::guard('employee')->attempt(['email' => $request->email, 'password' => $request->password])) {
             //return redirect()->route('dashboard');
+
             $employee = Auth::guard('employee')->user();
 
+            if($employee->user_type !== 'Employee') {
+                Auth::guard('employee')->logout();
+                return back();
+
+            }
+            // dd($employee);
             // Store user information in the session
-            session(['employee' => $employee]);
+            // session(['employee' => $employee]);
 
             return redirect()->intended('/employee/dashboard');
         } else {
@@ -58,12 +66,11 @@ class EmployeeController extends Controller
         $employee = Auth::guard('employee')->user();
 
 
-        $query = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->limit(3);
-
+        $query = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->limit(3);
 
 
         if ($employee->department_id === 1) {
-            $order = $query->where('production_details.artist_id', $employee->employee_id)->get();
+            $order = $query->where('production_details.artist_id', $employee->user_id)->get();
 
         } else if ($employee->department_id === 4) {
             $order = $query->whereIn('status', $statusArray)->get();
@@ -73,12 +80,15 @@ class EmployeeController extends Controller
 
         $production = $query->whereIn('production_details.status', $statusArray)->get();
 
+
+
         // dd($production);
 
         $startDate = Carbon::now()->startOfWeek(); // Start of the week (Sunday)
         $endDate = Carbon::now()->endOfWeek(); // End of the week (Saturday)
 
-        $query = $employee->department_id === 1 ? Employee::find($employee->employee_id)->teams : ProductionDetails::all();
+        $query = $employee->department_id === 1 ? User::find($employee->id)->teams : ProductionDetails::all();
+
 
         $boxes =
             [
@@ -91,7 +101,7 @@ class EmployeeController extends Controller
 
 
 
-        return Inertia::render('Employee/Dashboard', ['boxes' => $boxes, 'order' => $order, 'production' => $production]);
+        return Inertia::render('Employee/Dashboard', [ 'boxes' => $boxes, 'order' => $order, 'production' => $production]);
     }
 
 
@@ -101,14 +111,14 @@ class EmployeeController extends Controller
         $employee = Auth::guard('employee')->user();
 
 
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('equipment', 'production_details.printer_id', 'equipment.id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer');
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('equipment', 'production_details.printer_id', 'equipment.id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes', 'lineups', 'customer');
 
-        // dd($order);
-        $artists = Employee::where('department_id', 1)->get();
+
+        $artists = User::where('department_id', 1)->get();
         $printers = Equipment::where('equipment_type', 'printer')->where('equipment_status', 'Working')->get();
 
         if ($employee->department_id === 1) {
-            $order = $order->where('production_details.artist_id', $employee->employee_id)->get();
+            $order = $order->where('production_details.artist_id', $employee->user_id)->get();
         } else if ($employee->department_id === 4 || $employee->department_id === 5) {
             $order = $order->whereIn('status', $statusArray)->get();
         } else {
@@ -127,7 +137,7 @@ class EmployeeController extends Controller
         $employee = Auth::guard('employee')->user();
 
 
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('equipment', 'production_details.printer_id', 'equipment.id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer');
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('equipment', 'production_details.printer_id', 'equipment.id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes', 'lineups', 'customer');
 
         // dd($order);
         $artists = Employee::where('department_id', 1)->get();
@@ -147,7 +157,7 @@ class EmployeeController extends Controller
 
 
 
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('equipment', 'production_details.printer_id', 'equipment.id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer');
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('equipment', 'production_details.printer_id', 'equipment.id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes', 'lineups', 'customer');
 
         // dd($order);
         $artists = Employee::where('department_id', 1)->get();
@@ -165,7 +175,7 @@ class EmployeeController extends Controller
     {
 
 
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->where('production_details.status', 'Pending')->get();
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('users', 'production_details.artist_id', 'users.id')->with('products.attributes', 'attributes', 'lineups', 'customer')->where('production_details.status', 'Pending')->get();
         return Inertia::render('Employee/PendingTeams', ['order' => $order]);
     }
 
@@ -174,7 +184,7 @@ class EmployeeController extends Controller
     {
 
 
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->where('production_details.status', 'Finished')->get();
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->where('production_details.status', 'Finished')->get();
         return Inertia::render('Employee/FinishedTeams', ['order' => $order]);
     }
 
@@ -182,7 +192,7 @@ class EmployeeController extends Controller
 
     public function print_order($id)
     {
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes')->orderBy('orders.due_date', 'desc')->where('orders.id', $id)->first();
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes')->orderBy('orders.due_date', 'desc')->where('orders.id', $id)->first();
 
         return Inertia::render('Employee/Print', ['order' => $order]);
     }
@@ -193,7 +203,7 @@ class EmployeeController extends Controller
         $statusArray = ['Ready to Print', 'Printing', 'Printed', 'Sewing'];
         $employee = Auth::guard('employee')->user();
 
-        $order = Order::select('*', 'orders.id AS order_id')->selectRaw('(SELECT COUNT(*) FROM lineups WHERE lineups.order_id = orders.id AND lineups.status = "Error") AS error_count')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->orderBy('orders.due_date', 'desc')->whereIn('production_details.status', $statusArray)->where('production_details.artist_id', $employee->employee_id)->get();
+        $order = Order::select('*', 'orders.id AS order_id')->selectRaw('(SELECT COUNT(*) FROM lineups WHERE lineups.order_id = orders.id AND lineups.status = "Error") AS error_count')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->orderBy('orders.due_date', 'desc')->whereIn('production_details.status', $statusArray)->where('production_details.artist_id', $employee->employee_id)->get();
 
         // dd($order);
 
@@ -224,7 +234,7 @@ class EmployeeController extends Controller
 
     public function check($id)
     {
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes')->orderBy('orders.due_date', 'desc')->where('orders.id', $id)->first();
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes')->orderBy('orders.due_date', 'desc')->where('orders.id', $id)->first();
 
 
         return Inertia::render('Employee/Check', ['order' => $order]);
@@ -232,14 +242,14 @@ class EmployeeController extends Controller
 
     public function final_check($id)
     {
-        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes')->orderBy('orders.due_date', 'desc')->where('orders.id', $id)->first();
+        $order = Order::select('*', 'orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes')->orderBy('orders.due_date', 'desc')->where('orders.id', $id)->first();
 
 
         return Inertia::render('Employee/FinalCheck', ['order' => $order]);
     }
 
     public function reprint(){
-        $orders = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->leftJoin('employees', 'production_details.artist_id', 'employees.employee_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->whereIn('status', $this->statusArray)->get();
+        $orders = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->leftJoin('users', 'production_details.artist_id', 'users.user_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->whereIn('status', $this->statusArray)->get();
 
 
 

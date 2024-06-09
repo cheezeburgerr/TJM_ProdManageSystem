@@ -5,6 +5,7 @@ import { Chatbox } from "react-ionicons";
 
 const ChatBox = ({ rootUrl, userid }) => {
 
+    console.log(userid);
     const [showChatBox, setShowChatBox] = useState(false);
 
     const toggleChatBox = () => {
@@ -78,7 +79,7 @@ const ChatBox = ({ rootUrl, userid }) => {
                             <span ref={scroll}></span>
                         </div>
                         <div className="">
-                            <MessageInput rootUrl={rootUrl} />
+                            <MessageInput rootUrl={rootUrl} userid={userid}/>
                         </div>
                     </div>
                 </div>

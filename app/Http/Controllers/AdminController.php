@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\ProductionDetails;
 use App\Models\Products;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -141,7 +142,8 @@ class AdminController extends Controller
 
     public function employees()
     {
-        $employees = Employee::with('department')->get();
+        $employees = User::where('user_type', 'Employee')->with('department')->get();
+        // dd($employees);
         $departments = Department::all();
         // dd($employees);
         return Inertia::render('Admin/Employees', ['employees' => $employees, 'departments' => $departments]);
@@ -153,25 +155,27 @@ class AdminController extends Controller
     {
 
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+
+            'name' => 'required|string|max:255',
             'department_id' => 'required|int',
             'email' => 'required|string|lowercase|email|max:255',
 
         ]);
 
-        $lastEmployee = Employee::latest()->first();
-        $lastId = $lastEmployee ? substr($lastEmployee->employee_id, 4) : 0;
+        $lastEmployee = User::where('user_type', 'Employee')->latest()->first();
+        $lastId = $lastEmployee ? substr($lastEmployee->user_id, 4) : 0;
         $nextId = $lastId + 1;
         $customId = 'TJM_' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-        $emp = Employee::create([
-            'employee_id' => $customId,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
+        $emp = User::create([
+            'user_id' => $customId,
+            'name' => $request->name,
             'email' => $request->email,
+            'contact_number' => $request->contact_number,
+            'address' => $request->address,
             'department_id' => $request->department_id,
-            'password' => Hash::make('password')
+            'password' => Hash::make('password'),
+            'user_type' => 'Employee'
         ]);
 
 

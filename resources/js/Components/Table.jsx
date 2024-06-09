@@ -255,7 +255,7 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                                                                     <span className='bg-slate-900 px-2 text-gray-100 rounded-full'>{item[col.field]}</span>
                                                                 )}
                                                         </>
-                                                    ) : col.field === 'first_name' ? (<>{
+                                                    ) : col.field === 'name' ? (<>{
                                                         <span className='inline-flex items-center'>
                                                             <img src={item.profile_image ? `/images/employees/${item.profile_image}` : '/images/customers/profile.jpg'} alt="" className='h-5 rounded-full me-2' />
 
@@ -385,7 +385,7 @@ export default function Table({ order, column, data, emp, fetchData, artists, pr
                         <AssignModal
                             id={teams[assignIndex].production_details_id}
                             mode={modalMode}
-                            options={modalMode === 'artist' ? artists.map(artist => ({ value: artist.employee_id, label: artist.first_name })) : printers.map(printer => ({ value: printer.id, label: printer.equipment_name }))}
+                            options={modalMode === 'artist' ? artists.map(artist => ({ value: artist.user_id, label: artist.name })) : printers.map(printer => ({ value: printer.id, label: printer.equipment_name }))}
                             onSubmit={closeAssign}
                         />
                     </Modal>

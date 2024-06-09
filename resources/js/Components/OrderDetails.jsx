@@ -161,7 +161,7 @@ export default function OrderDetails({ edit, order, className = '', ...props }) 
                    ) : (
 
                     <>
-                   <p className="text-center"> No proof uploaded.</p>
+                   <p className="text-center"> No proof uploaded.o</p>
                     </>
                    )}
 

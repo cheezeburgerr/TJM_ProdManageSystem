@@ -21,7 +21,7 @@ class Order extends Model
 
     public function production()
     {
-        return $this->belongsTo(ProductionDetails::class, 'production_details_id');
+        return $this->hasOne(ProductionDetails::class, 'order_id');
     }
 
     public function attributes(){

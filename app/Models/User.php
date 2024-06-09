@@ -17,11 +17,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
+        'user_type',
         'name',
         'email',
         'address',
         'contact_number',
         'password',
+        'department_id'
     ];
 
     /**
@@ -53,5 +56,17 @@ class User extends Authenticatable
 
     public function messages() {
         return $this->hasMany(Messages::class, 'user_id');
+    }
+
+    public function teams(){
+        return $this->hasMany(ProductionDetails::class, 'artist_id', 'user_id');
+    }
+
+    public function department(){
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function employee(){
+        return $this->belongsTo(Employee::class, 'user_id');
     }
 }

@@ -22,10 +22,10 @@ class ProductionDetails extends Model
 
     public function order()
     {
-        return $this->hasOne(Order::class, 'production_details_id');
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function artist(){
-        return $this->belongsTo(Employee::class, 'artist_id');
+        return $this->belongsTo(User::class, 'artist_id');
     }
 }

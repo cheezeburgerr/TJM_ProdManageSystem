@@ -19,7 +19,7 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
     public function index () {
-        $orders = Order::select('*','orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->where('orders.customer_id', Auth::id())->orderBy('orders.due_date', 'desc')->get();
+        $orders = Order::select('*','orders.id AS order_id')->leftJoin('products', 'orders.product_id', 'products.id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->where('orders.customer_id', Auth::id())->orderBy('orders.due_date', 'desc')->get();
 
 
 

@@ -5,11 +5,16 @@ import PrimaryButton from "../PrimaryButton";
 const MessageInput = ({ rootUrl, userid }) => {
     const [message, setMessage] = useState("");
 
+    console.log(userid);
+
     const messageRequest = async (text) => {
         try {
+
             await axios.post(`${rootUrl}/message`, {
+                userid,
                 text,
             });
+
 
             console.log(text);
         } catch (err) {

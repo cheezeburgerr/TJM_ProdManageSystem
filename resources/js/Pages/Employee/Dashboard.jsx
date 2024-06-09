@@ -27,7 +27,7 @@ export default function Dashboard({ auth, boxes, order, production }) {
             { title: 'Apparel', field: 'product_name' },
             { title: 'Due Date', field: 'due_date' },
             { title: 'Status', field: 'status' },
-            { title: 'Artist', field: 'first_name' }
+
         ];
     } else {
         columns = [
@@ -48,7 +48,7 @@ export default function Dashboard({ auth, boxes, order, production }) {
 
             <Head title="Dashboard" />
 
-            <h1 className='text-2xl font-bold mb-8 text-gray-100'>Hello {auth.employee.first_name}!</h1>
+            <h1 className='text-2xl font-bold mb-8 text-gray-900'>Hello {auth.employee.name}!</h1>
 
             {props.flash.success && (
                         <>
@@ -61,7 +61,7 @@ export default function Dashboard({ auth, boxes, order, production }) {
                     )}
 
 
-<ChatBox rootUrl={'http://127.0.0.1:8000'} userid={auth.employee.employee_id}/>
+<ChatBox rootUrl={'http://127.0.0.1:8000'} userid={auth.employee.id}/>
             <InfoBoxes boxes={boxes} />
             <div class="container">
                 <div class="md:grid grid-cols-5 grid-flow-col gap-4">

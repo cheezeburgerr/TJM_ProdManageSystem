@@ -116,10 +116,10 @@ class OrderController extends Controller
             'team_name' => 'required|string|max:255',
             'due_date' => 'required|date',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            // Add validation rules for other form fields if needed
+
         ]);
 
-        // Store image file
+
         if ($request->has('image')) {
             $imagePath = $request->file('image');
             $name = time() . '.' . $imagePath->getClientOriginalExtension();
@@ -127,13 +127,9 @@ class OrderController extends Controller
         }
 
 
-        // Create new order record
 
         $id = Auth::id();
 
-        $production_details = ProductionDetails::create([
-            'status' => 'Pending'
-        ]);
 
         $order = new Order();
         $order->team_name = $request->team_name;
@@ -141,11 +137,14 @@ class OrderController extends Controller
         $order->design = $name;
         $order->order_price = $request->order_price;
         $order->customer_id = $id;
-        $order->production_details_id = $production_details->production_details_id;
         $order->product_id = $request->product_id;
         $order->save();
 
 
+        $production_details = ProductionDetails::create([
+            'status' => 'Pending',
+            'order_id' => $order->id
+        ]);
         foreach ($request->all() as $key => $value) {
 
             if (is_numeric($key) && !in_array($key, ['team_name', 'due_date', 'image'])) {
@@ -193,19 +192,20 @@ class OrderController extends Controller
 
         $id = Auth::id();
 
-        $production_details = ProductionDetails::create([
-            'status' => 'Pending'
-        ]);
-
         $order = new Order();
         $order->team_name = $request->team_name;
         $order->due_date = $request->due_date;
         $order->design = $request->image;
         $order->order_price = $request->order_price;
         $order->customer_id = $id;
-        $order->production_details_id = $production_details->production_details_id;
         $order->product_id = $request->product_id;
         $order->save();
+
+
+        $production_details = ProductionDetails::create([
+            'status' => 'Pending',
+            'order_id' => $order->id
+        ]);
 
 
         foreach ($request->all() as $key => $value) {
@@ -299,7 +299,7 @@ class OrderController extends Controller
     public function get_details($id)
     {
 
-        $data = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.production_details_id', 'production_details.production_details_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->find($id);
+        $data = Order::select('*', 'orders.id AS order_id')->leftJoin('production_details', 'orders.id', 'production_details.order_id')->with('products.attributes', 'attributes', 'lineups', 'customer')->find($id);
 
         // dd($data);
         if (!$data) {

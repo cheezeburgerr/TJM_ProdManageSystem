@@ -21,10 +21,10 @@ export default function Teams({ auth, boxes, order, artists, printers }) {
     ];
 
     if (auth.employee.department_id === 2) {
-        columns.push({ title: 'Artist', field: 'first_name' });
+        columns.push({ title: 'Artist', field: 'name' });
     }
     if (auth.employee.department_id === 4) {
-        columns.push({ title: 'Artist', field: 'first_name' });
+        columns.push({ title: 'Artist', field: 'name' });
         columns.push({ title: 'Printer', field: 'equipment_name' });
     }
 
@@ -32,12 +32,15 @@ export default function Teams({ auth, boxes, order, artists, printers }) {
         setTab(tabName);
     };
 
+
+
     return (
         <EmployeeLayout
             user={auth.employee}
             header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
         >
             <Head title="Teams" />
+
             <div>
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-2xl font-bold mb-4">Teams</h1>
